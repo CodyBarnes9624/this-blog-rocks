@@ -10,8 +10,7 @@ const Blog = () => {
   useEffect(() => {
     // Fetch posts from an API or a local file
     const fetchPosts = async () => {
-      // Replace with your API endpoint
-      const response = await fetch('https://api.example.com/posts');
+      const response = await fetch('/api/posts');
       const data = await response.json();
       setPosts(data);
     };
