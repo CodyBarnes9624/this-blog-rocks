@@ -18,8 +18,17 @@ module.exports = {
     })
     const Token=await TokenResponse.json()
 
+    const PlaylistRequest=await fetch("https://api.spotify.com/v1/browse/featured-playlists?locale=en_US",{
+        method:"GET",
+        headers: {
+             'Content-Type': 'application/json',
+             'Authorization':`Bearer ${Token.access_token}`
+             }
+    })
+    const PlaylistData=await PlaylistRequest.json()
 
-    
+
+
     res.json(foundUser);
   },
   // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)
