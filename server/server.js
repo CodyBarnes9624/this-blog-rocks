@@ -21,6 +21,8 @@ const JWT_SECRET = 'supersecretkey123';
 const users = [];
 
 
+app.use(routes);
+// if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }

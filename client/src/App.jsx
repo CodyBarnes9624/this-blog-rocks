@@ -1,27 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Header from './components/Header.jsx';
-import Footer from './components/Footer.jsx';
-import Home from './pages/Home.jsx';
-import Blog from './pages/Blog.jsx';
-import Login from './pages/Login.jsx';  
-import ProtectedPage from './pages/ProtectedPage.jsx'; 
-import NotFound from './components/NotFound.jsx';
+//import './App.css';
+import { Outlet } from 'react-router-dom';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
-const App = () => {
-  const isAuthenticated = !!getToken();  
+const client = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache(),
+});
 
+function App() {
   return (
-    <Router>
-      <Header />
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/blog" component={Blog} />
-        <Route component={NotFound} />
-      </Switch>
-      <Footer />
-    </Router>
+    <ApolloProvider client={client}>
+      <div className="flex-column justify-center align-center min-100-vh bg-primary">
+        <Outlet />
+      </div>
+    </ApolloProvider>
   );
-};
+}
 
 export default App;

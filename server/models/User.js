@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
 
 // import schema from Post.js
-const postSchema = require('./Post');
+const playlistSchema = require('./Playlist');
 
 const userSchema = new Schema(
   {
@@ -22,7 +22,7 @@ const userSchema = new Schema(
       required: true,
     },
     // set savedPosts to be an array of data that adheres to the postSchema
-    savedPosts: [postSchema],
+    savedPosts: [playlistSchema],
   },
   {
     toJSON: {
