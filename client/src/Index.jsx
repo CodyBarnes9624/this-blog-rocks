@@ -1,7 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import './styles.css';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from './App.jsx';
+import Home from './pages/Home';
+import Blog from './pages/Blog';
 
+//import NotFound from './pages/NotFound';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    // errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <Home />
+      }, {
+        path: '/blog',
+        element: <Blog />
+      }
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <RouterProvider router={router} />
+);

@@ -6,7 +6,7 @@ const BlogList = ({ posts }) => {
     <div>
       {posts.map(post => (
         <div key={post.id}>
-          <h2>{post.title}</h2>
+          <h2>{post.name}</h2>
           <Link to={`/blog/${post.id}`}>Read More</Link>
         </div>
       ))}

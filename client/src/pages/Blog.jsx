@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BlogList from '../components/BlogList ';
+import BlogList from '../components/BlogList';
 import BlogPost from '../components/BlogPost';
 import { useParams } from 'react-router-dom';
 
@@ -11,11 +11,11 @@ const Blog = () => {
     // Fetch posts from an API or a local file
     const fetchPosts = async () => {
       // Replace with your API endpoint
-      const response = await fetch('https://api.example.com/posts');
+      const response = await fetch('/api/music/playlists');
       const data = await response.json();
-      setPosts(data);
+      setPosts(data.playlists.items);
     };
-
+    console.log('Fetching playlists!!!')
     fetchPosts();
   }, []);
 
@@ -24,7 +24,11 @@ const Blog = () => {
     return post ? <BlogPost post={post} /> : <h2>Loading...</h2>;
   }
 
-  return <BlogList posts={posts} />;
+  return (
+    <><h1>Blog page</h1>
+    <BlogList posts={posts} />
+    </>
+  )
 };
 
 export default Blog;
