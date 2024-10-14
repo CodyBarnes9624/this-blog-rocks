@@ -1,63 +1,53 @@
-const { User, Post } = require('../models'); 
-const { AuthenticationError } = require('apollo-server-express');
+const { User, Blog, Vote } = require('../models');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const secret = 'mysecretsshh'; 
-const expiration = '2h';
+const secret = 'yourSecretKey';  // Store this securely
+
 const resolvers = {
   Query: {
-    // Get all users
-    users: async () => {
-      return User.find().populate('savedPosts');
+    getUsers: async () => {
+      return await User.find();
     },
-    // Get a single user by ID
-    user: async (parent, { id }) => {
-      return User.findById(id).populate('savedPosts');
+    getBlogs: async () => {
+      return await Blog.find().populate('author');
     },
-    // Get all posts
-    posts: async () => {
-      return Post.find().populate('author');
-    },
-    // Get a single post by ID
-    post: async (parent, { id }) => {
-      return Post.findById(id).populate('author');
-    },
+    getBlog: async (parent, { id }) => {
+      return await Blog.findById(id).populate('author');
+    }
   },
-
   Mutation: {
-    // Add a new user
-    addUser: async (parent, { username, email, password }) => {
-      const user = await User.create({ username, email, password });
-      const token = jwt.sign({ _id: user._id }, secret, { expiresIn: expiration });
+    register: async (parent, { username, email, password }) => {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await User.create({ username, email, password: hashedPassword });
+      const token = jwt.sign({ userId: user.id }, secret);
       return { token, user };
     },
-    // Log in an existing user
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-
-      const token = jwt.sign({ _id: user._id }, secret, { expiresIn: expiration });
+      if (!user) throw new Error('No user found');
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) throw new Error('Invalid password');
+      const token = jwt.sign({ userId: user.id }, secret);
       return { token, user };
     },
-    // Add a new post (song)
-    addPost: async (parent, { movieTitle, songTitle, songLink, explanation, author }) => {
-      const post = await Post.create({ movieTitle, songTitle, songLink, explanation, author });
-      await User.findByIdAndUpdate(author, { $push: { savedPosts: post._id } });
-      return post;
+    addBlog: async (parent, { title, content, playlistUrl }, context) => {
+      if (!context.user) throw new Error('You must be logged in to create a blog');
+      const blog = await Blog.create({ title, content, playlistUrl, author: context.user.id });
+      return blog;
     },
-    // Delete a post
-    deletePost: async (parent, { id }) => {
-      const post = await Post.findByIdAndDelete(id);
-      await User.findByIdAndUpdate(post.author, { $pull: { savedPosts: post._id } });
-      return post;
+    deleteBlog: async (parent, { id }, context) => {
+      if (!context.user) throw new Error('You must be logged in to delete a blog');
+      const blog = await Blog.findById(id);
+      if (blog.author.toString() !== context.user.id) throw new Error('Not authorized');
+      await Blog.findByIdAndDelete(id);
+      return blog;
     },
-  },
+    voteOnBlog: async (parent, { blogId }, context) => {
+      if (!context.user) throw new Error('You must be logged in to vote');
+      const vote = await Vote.create({ user: context.user.id, blog: blogId });
+      return vote;
+    }
+  }
 };
 
 module.exports = resolvers;

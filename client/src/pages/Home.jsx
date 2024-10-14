@@ -1,5 +1,13 @@
-const Home = () => {
-  return <h2>Welcome to the Music Blog</h2>;
-};
+// pages/Home.js
+import React from 'react';
+
+function Home() {
+  return (
+    <div>
+      <h1>Welcome to the Home Page</h1>
+      {}
+    </div>
+  );
+}
 
 export default Home;

@@ -1,4 +1,5 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000'; 
+// src/services/authService.js
+
 
 
 export const login = async (username, password) => {
@@ -17,28 +18,4 @@ export const login = async (username, password) => {
     } else {
         throw new Error(data.message);
     }
-};
-
-export const register = async (username, password) => {
-    const response = await fetch(`${API_URL}/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-        return data;
-    } else {
-        throw new Error(data.message);
-    }
-};
-export const getToken = () => {
-    return localStorage.getItem('token');
-};
-
-export const logout = () => {
-    localStorage.removeItem('token');
 };

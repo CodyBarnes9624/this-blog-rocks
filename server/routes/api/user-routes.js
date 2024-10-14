@@ -2,21 +2,22 @@ const router = require('express').Router();
 const {
   createUser,
   getSingleUser,
-  saveBook,
-  deleteBook,
+  savePlaylist,      // Function to save a playlist
+  deletePlaylist,    // Function to delete a playlist
   login,
 } = require('../../controllers/user-controller');
 
-// import middleware
+// Import auth middleware to verify the token
 const { authMiddleware } = require('../../utils/auth');
 
-// put authMiddleware anywhere we need to send a token for verification of user
-router.route('/').post(createUser).put(authMiddleware, saveBook);
-
+// Routes for user registration and login
+router.route('/register').post(createUser);
 router.route('/login').post(login);
 
-router.route('/me').get(authMiddleware, getSingleUser);
+// Routes for authenticated user to get profile and manage playlists
+router.route('/me').get(authMiddleware, getSingleUser);  // Fetch user profile
 
-router.route('/books/:bookId').delete(authMiddleware, deleteBook);
+router.route('/playlists').put(authMiddleware, savePlaylist);  // Save a playlist
+router.route('/playlists/:playlistId').delete(authMiddleware, deletePlaylist);  // Delete a playlist
 
 module.exports = router;

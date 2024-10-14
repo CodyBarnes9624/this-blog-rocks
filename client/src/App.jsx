@@ -1,20 +1,35 @@
-//import './App.css';
-import { Outlet } from 'react-router-dom';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+// App.js
+import React, { useState } from 'react';
+import Home from './pages/Home';
+import Blog from './pages/Blog';
 
-const client = new ApolloClient({
-  uri: '/graphql',
-  cache: new InMemoryCache(),
-});
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('home');
 
-function App() {
+  const navigate = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <Home />;
+      case 'blog':
+        return <Blog />;
+      default:
+        return <h1>Page Not Found</h1>; // Default case for unknown pages
+    }
+  };
+
   return (
-    <ApolloProvider client={client}>
-      <div className="flex-column justify-center align-center min-100-vh bg-primary">
-        <Outlet />
-      </div>
-    </ApolloProvider>
+    <div>
+      <nav>
+        <button onClick={() => navigate('home')}>Home</button>
+        <button onClick={() => navigate('blog')}>Blog</button>
+      </nav>
+      <div>{renderPage()}</div>
+    </div>
   );
-}
+};
 
 export default App;

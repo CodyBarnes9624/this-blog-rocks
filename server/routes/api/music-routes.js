@@ -1,14 +1,28 @@
 const router = require('express').Router();
 const {
-  getFeaturedPlaylist,
+  getAllPlaylists,
+  getPlaylistById,
+  createPlaylist,
+  updatePlaylist,
+  deletePlaylist,
+} = require('../../controllers/music-controller');
 
-} = require('../../controllers/api-controller');
-
-// import middleware
+// Import middleware to verify JWT
 const { authMiddleware } = require('../../utils/auth');
 
-// put authMiddleware anywhere we need to send a token for verification of user
-router.route('/playlists').get(getFeaturedPlaylist);
+// Public route to get all playlists
+router.route('/playlists').get(getAllPlaylists);
 
+// Public route to get a playlist by its ID
+router.route('/playlists/:id').get(getPlaylistById);
+
+// Protected route to create a playlist (requires authentication)
+router.route('/playlists').post(authMiddleware, createPlaylist);
+
+// Protected route to update a playlist by its ID (requires authentication)
+router.route('/playlists/:id').put(authMiddleware, updatePlaylist);
+
+// Protected route to delete a playlist by its ID (requires authentication)
+router.route('/playlists/:id').delete(authMiddleware, deletePlaylist);
 
 module.exports = router;

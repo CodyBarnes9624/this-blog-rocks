@@ -2,43 +2,44 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
   type User {
-    _id: ID!
+    id: ID!
     username: String!
     email: String!
-    posts: [Post]
+    password: String!
   }
 
-  type Post {
-    _id: ID!
-    movieTitle: String!
-    songTitle: String!
-    songLink: String!
-    explanation: String!
-    createdAt: String
-    author: User
-    comments: [Comment]
+  type Blog {
+    id: ID!
+    title: String!
+    content: String!
+    playlistUrl: String!
+    author: User!
+    createdAt: String!
   }
 
-  type Comment {
-    _id: ID!
-    commentText: String!
-    createdAt: String
-    author: User
-    post: Post
+  type Vote {
+    id: ID!
+    user: User!
+    blog: Blog!
   }
 
   type Query {
-    users: [User]
-    user(id: ID!): User
-    posts: [Post]
-    post(id: ID!): Post
+    getUsers: [User]
+    getBlogs: [Blog]
+    getBlog(id: ID!): Blog
   }
 
   type Mutation {
-    addUser(username: String!, email: String!, password: String!): User
-    addPost(movieTitle: String!, songTitle: String!, songLink: String!, explanation: String!, author: ID!): Post
-    addComment(commentText: String!, author: ID!, post: ID!): Comment
-    deletePost(id: ID!): Post
+    addBlog(title: String!, content: String!, playlistUrl: String!): Blog
+    deleteBlog(id: ID!): Blog
+    register(username: String!, email: String!, password: String!): User
+    login(email: String!, password: String!): AuthPayload
+    voteOnBlog(blogId: ID!): Vote
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
   }
 `;
 
