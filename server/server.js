@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const db = require('./config/connection');
 const routes = require('./routes');
+const blogRoutes = require('./routes/api/blog-routes'); // Add this line
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,15 +15,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); 
 
-
 const JWT_SECRET = 'supersecretkey123';
-
-
 const users = [];
 
+// Blog routes setup
+app.use('/api/blog', blogRoutes); // Add this line to use the blog routes
 
 app.use(routes);
-// if we're in production, serve client/build as static assets
+
+// If we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
@@ -31,7 +32,6 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
-  
   const hashedPassword = await bcrypt.hash(password, 10);
   users.push({ username, password: hashedPassword });
 
@@ -47,7 +47,6 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'Invalid username or password' });
   }
 
- 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid username or password' });
@@ -76,8 +75,6 @@ function verifyToken(req, res, next) {
 app.get('/protected', verifyToken, (req, res) => {
   res.json({ message: 'You have access to this protected route', user: req.user });
 });
-
-app.use(routes);
 
 db.once('open', () => {
   app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
