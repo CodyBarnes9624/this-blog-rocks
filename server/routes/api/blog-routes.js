@@ -1,5 +1,5 @@
 const router = require('express').Router();
-let blogPosts = []; // You can replace this with a database
+let blogPosts = []; 
 
 // Route to get all blog posts
 router.get('/posts', (req, res) => {

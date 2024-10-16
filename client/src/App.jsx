@@ -1,8 +1,6 @@
-//import './App.css';
 import { Outlet } from 'react-router-dom';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import Header from './components/Header';
-
 
 const client = new ApolloClient({
   uri: '/graphql',
@@ -14,7 +12,7 @@ function App() {
     <ApolloProvider client={client}>
       <div className="flex-column justify-center align-center min-100-vh bg-primary">
         <Header />
-        <Outlet />
+        <Outlet /> {/* Render the nested routes here */}
       </div>
     </ApolloProvider>
   );

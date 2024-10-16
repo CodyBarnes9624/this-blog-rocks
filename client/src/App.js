@@ -1,10 +1,12 @@
 import './App.css';
-import Home from './pages/Home';  
+import { Outlet } from 'react-router-dom'; // Import Outlet from react-router-dom
+import Header from './components/Header'; 
 
 function App() {
   return (
     <div className="App">
-      <Home />
+      <Header /> {}
+      <Outlet /> {/* This is where nested routes will render */}
     </div>
   );
 }
