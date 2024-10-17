@@ -1,6 +1,6 @@
-// Header.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './Header.css';  
 
 const Header = () => {
   return (
@@ -8,12 +8,11 @@ const Header = () => {
       <nav>
         <Link to="/">Home</Link>
         <Link to="/blog">Blog</Link>
-        <Link to="/login">Login</Link> {/* Link to Login */}
-        <Link to="/register">Register</Link> {/* Link to Register */}
+        <Link to="/login">Login</Link>
+        <Link to="/register">Register</Link>
       </nav>
     </header>
   );
 };
 
 export default Header;
-

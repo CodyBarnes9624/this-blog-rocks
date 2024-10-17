@@ -1,0 +1,36 @@
+/* Header styles */
+header {
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  
+  nav {
+    display: flex;
+    justify-content: center;
+  }
+  
+ 
+  nav a {
+    color: #fff; 
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin: 0 15px;
+    font-family: 'Poppins', sans-serif; 
+    transition: color 0.3s ease; 
+  }
+  
+  
+  nav a:hover {
+    color: #f9d423; 
+  }
+  
+  
+  .home-container {
+    padding-top: 80px; 
+  }
+  
