@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMutation } from '@apollo/client';
 import { REGISTER_USER } from '../graphql/mutations'; // Make sure this path is correct
+import './Register.css'; // Import the new CSS file
 
 const Register = () => {
   const [registerUser, { loading, error }] = useMutation(REGISTER_USER);
@@ -25,7 +26,7 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleRegister}>
+    <form className="register-form" onSubmit={handleRegister}>
       <input name="username" placeholder="Username" required />
       <input name="email" placeholder="Email" required type="email" />
       <input name="password" placeholder="Password" required type="password" />
