@@ -2,6 +2,12 @@ import { Outlet } from 'react-router-dom';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import Header from './components/Header';
 
+
+
+
+
+
+
 const client = new ApolloClient({
   uri: 'http://localhost:3001/graphql',
   cache: new InMemoryCache(),

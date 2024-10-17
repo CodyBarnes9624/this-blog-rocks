@@ -1,13 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import './BlogList.css';  
 
 const BlogList = ({ posts }) => {
   return (
-    <div>
+    <div className="blog-list">
       {posts.map(post => (
-        <div key={post.id}>
-          <h2>{post.name}</h2>
-          <Link to={`/blog/${post.id}`}>Read More</Link>
+        <div className="blog-list-item" key={post.id}>
+          <h3>{post.title}</h3>
+          <p>{post.description}</p>
         </div>
       ))}
     </div>
