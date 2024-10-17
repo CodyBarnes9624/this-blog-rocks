@@ -3,10 +3,9 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import Header from './components/Header';
 
 const client = new ApolloClient({
-  uri: '/graphql',
+  uri: 'http://localhost:3001/graphql',
   cache: new InMemoryCache(),
 });
-
 function App() {
   return (
     <ApolloProvider client={client}>
@@ -17,5 +16,6 @@ function App() {
     </ApolloProvider>
   );
 }
+
 
 export default App;

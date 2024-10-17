@@ -4,13 +4,15 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const db = require('./config/connection');
-const routes = require('./routes');
 const blogRoutes = require('./routes/api/blog-routes'); // Import blog routes
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphQL/schema.js'); 
 const resolvers = require('./graphQL/resolvers.js'); 
+const UserModel = require('./models/User'); // Import your User model
+require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
+
 
 // Create a new Apollo Server instance
 const server = new ApolloServer({ typeDefs, resolvers });
@@ -25,7 +27,7 @@ const startServer = async () => {
   app.use(cors());
 
   // Apply the Apollo GraphQL middleware to your Express server
-  server.applyMiddleware({ app }); 
+  server.applyMiddleware({ app, path: '/graphql' }); 
 
   // Blog routes setup
   app.use('/api/blog', blogRoutes); // Use the blog routes
@@ -33,37 +35,66 @@ const startServer = async () => {
   // If we're in production, serve client/build as static assets
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/build')));
+
+    // Serve React frontend
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+    });
   }
 
   // Register Route
   app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      const { username, email, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Store user in your database (adjust according to your User model)
-    const user = await User.create({ username, password: hashedPassword }); // Replace this with your user creation logic
-    res.json({ message: 'User registered successfully!', user });
+      // Store user in your database
+      const user = await UserModel.create({
+        username,
+        email,
+        password: hashedPassword,
+      });
+
+      res.json({ message: 'User registered successfully!', user });
+    } catch (error) {
+      console.error('Error during registration:', error);
+      if (error.code === 11000) {
+        res.status(400).json({ message: 'Username or email already exists' });
+      } else {
+        res.status(500).json({ message: 'Server error', error });
+      }
+    }
   });
 
   // Login Route
   app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    try {
+      const { username, password } = req.body;
 
-   
-    const user = await User.findOne({ username });
+      // Find user in the database
+      const user = await UserModel.findOne({ username });
 
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid username or password' });
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid username or password' });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid username or password' });
+      }
+
+      // Create JWT token
+      const token = jwt.sign(
+        { userId: user._id, username: user.username },
+        'secret',
+        { expiresIn: '1h' }
+      );
+
+      res.json({ token });
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ message: 'Server error', error });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid username or password' });
-    }
-
-    // Create JWT token
-    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
   });
 
   // Middleware to verify JWT token
@@ -72,7 +103,9 @@ const startServer = async () => {
     if (!token) return res.status(401).json({ message: 'Access Denied' });
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Extract token after "Bearer"
+      const tokenWithoutBearer = token.split(' ')[1];
+      const decoded = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
       req.user = decoded; 
       next();
     } catch (err) {
@@ -80,7 +113,7 @@ const startServer = async () => {
     }
   }
 
- 
+  // Protected Route
   app.get('/protected', verifyToken, (req, res) => {
     res.json({ message: 'You have access to this protected route', user: req.user });
   });

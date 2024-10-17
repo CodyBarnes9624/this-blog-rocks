@@ -7,7 +7,7 @@ import Blog from './pages/Blog';
 import Login from './components/Login'; 
 import Register from './components/Register'; 
 
-\
+
 
 const router = createBrowserRouter([
   {
