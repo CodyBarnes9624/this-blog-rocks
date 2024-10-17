@@ -1,61 +1,64 @@
-const { User, Post } = require('../models'); 
-const { AuthenticationError } = require('apollo-server-express');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const secret = 'mysecretsshh'; 
-const expiration = '2h';
+const UserModel = require('../models/User');
+require('dotenv').config();
+const secret = 'secret';
+
 const resolvers = {
-  Query: {
-    // Get all users
-    users: async () => {
-      return User.find().populate('savedPosts');
-    },
-    // Get a single user by ID
-    user: async (parent, { id }) => {
-      return User.findById(id).populate('savedPosts');
-    },
-    // Get all posts
-    posts: async () => {
-      return Post.find().populate('author');
-    },
-    // Get a single post by ID
-    post: async (parent, { id }) => {
-      return Post.findById(id).populate('author');
-    },
-  },
-
   Mutation: {
-    // Add a new user
-    addUser: async (parent, { username, email, password }) => {
-      const user = await User.create({ username, email, password });
-      const token = jwt.sign({ _id: user._id }, secret, { expiresIn: expiration });
-      return { token, user };
-    },
-    // Log in an existing user
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
+    register: async (_, { username, email, password }) => {
+      // Check if user already exists
+      const existingUser = await UserModel.findOne({ $or: [{ username }, { email }] });
+      if (existingUser) throw new Error('Username or email already exists');
 
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log(password)
+      // Create the new user
+      const user = await UserModel.create({
+        username,
+        email,
+        password: hashedPassword,
+      });
 
-      const token = jwt.sign({ _id: user._id }, secret, { expiresIn: expiration });
-      return { token, user };
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
+
+      // Return token and user (exclude password)
+      return {
+        token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      };
     },
-    // Add a new post (song)
-    addPost: async (parent, { movieTitle, songTitle, songLink, explanation, author }) => {
-      const post = await Post.create({ movieTitle, songTitle, songLink, explanation, author });
-      await User.findByIdAndUpdate(author, { $push: { savedPosts: post._id } });
-      return post;
-    },
-    // Delete a post
-    deletePost: async (parent, { id }) => {
-      const post = await Post.findByIdAndDelete(id);
-      await User.findByIdAndUpdate(post.author, { $pull: { savedPosts: post._id } });
-      return post;
+
+    login: async (_, { username, password }) => {
+      // Find user by username
+      const user = await UserModel.findOne({ username });
+      console.log(user);
+      console.log(password);
+      if (!user) throw new Error('Invalid username or password');
+
+      // Check if the password is correct
+      const valid = await bcrypt.compare(password, user.password);
+      console.log(valid);
+      if (!valid) throw new Error('Invalid username or password');
+
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
+
+      // Return token and user (exclude password)
+      return {
+        token,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      };
     },
   },
 };

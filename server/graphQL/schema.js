@@ -10,35 +10,27 @@ const typeDefs = gql`
 
   type Post {
     _id: ID!
-    movieTitle: String!
-    songTitle: String!
-    songLink: String!
-    explanation: String!
+    title: String!
+    content: String!
     createdAt: String
     author: User
-    comments: [Comment]
-  }
-
-  type Comment {
-    _id: ID!
-    commentText: String!
-    createdAt: String
-    author: User
-    post: Post
   }
 
   type Query {
     users: [User]
-    user(id: ID!): User
+    user(_id: ID!): User
     posts: [Post]
-    post(id: ID!): Post
   }
 
   type Mutation {
     addUser(username: String!, email: String!, password: String!): User
-    addPost(movieTitle: String!, songTitle: String!, songLink: String!, explanation: String!, author: ID!): Post
-    addComment(commentText: String!, author: ID!, post: ID!): Comment
-    deletePost(id: ID!): Post
+    register(username: String!, email: String!, password: String!): AuthPayload
+    login(username: String!, password: String!): AuthPayload
+  }
+
+  type AuthPayload {
+    token: String!
+    user: User!
   }
 `;
 
