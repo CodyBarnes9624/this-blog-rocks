@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+import './BlogForm.css'; 
+
+
+
 const BlogForm = ({ onSubmit, onEdit, currentPost }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -29,29 +33,38 @@ const BlogForm = ({ onSubmit, onEdit, currentPost }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>{currentPost ? 'Edit Blog Post' : 'Create a New Blog Post'}</h2>
-      <div>
-        <label>Title</label>
+
+    <form className="blog-form" onSubmit={handleSubmit}>
+      <h2 className="form-title">{currentPost ? 'Edit Blog Post' : 'Create a New Blog Post'}</h2>
+      <div className="form-group">
+        <label className="form-label">Title</label>
         <input
           type="text"
+          className="form-input"
+
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
         />
       </div>
-      <div>
-        <label>Content</label>
+
+      <div className="form-group">
+        <label className="form-label">Content</label>
         <textarea
+          className="form-textarea"
+
           value={content}
           onChange={(e) => setContent(e.target.value)}
           required
         />
       </div>
-      <button type="submit">{currentPost ? 'Update Post' : 'Post Blog'}</button>
+
+      <button className="form-button" type="submit">
+        {currentPost ? 'Update Post' : 'Post Blog'}
+      </button>
+
     </form>
   );
 };
 
 export default BlogForm;
-

@@ -1,0 +1,27 @@
+
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;  
+    background: linear-gradient(45deg, #ff4e50, #f9d423); 
+    color: white;
+    text-align: center;
+  }
+  
+  
+  h2 {
+    font-family: 'Poppins', sans-serif;  
+    font-size: 3rem;
+    font-weight: 600;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+  }
+  
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
+  }
+  
