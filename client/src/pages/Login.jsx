@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import { setAuthToken } from '../utils/auth';
+import './Login.css';  // Import CSS for styling
 
 const LOGIN_USER = gql`
   mutation Login($username: String!, $password: String!) {
@@ -23,34 +24,43 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await loginUser({
-        variables: { username, password },  // Make sure variables are passed correctly
+        variables: { username, password },
       });
       const { token } = data.login;
-      setAuthToken(token);  // Store the token for authentication
+      setAuthToken(token); 
     } catch (error) {
-      console.error('Login error:', error);  // Log the error for debugging
+      console.error('Login error:', error);
       alert('Login failed. Please check your credentials.');
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleLogin}>
+        <h2 className="login-title">Login</h2>
+        <div className="form-group">
+          <input
+            type="text"
+            className="login-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            className="login-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit" className="login-button">Login</button>
+      </form>
+    </div>
   );
 };
 
