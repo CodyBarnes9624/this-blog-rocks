@@ -28,7 +28,7 @@ module.exports = {
     const PlaylistData=await PlaylistRequest.json()
 
 
-
+console.log(PlaylistData)
     res.json(PlaylistData);
   },
   // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)

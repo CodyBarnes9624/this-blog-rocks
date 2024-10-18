@@ -9,6 +9,7 @@ const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphQL/schema.js'); 
 const resolvers = require('./graphQL/resolvers.js'); 
 const UserModel = require('./models/User'); // Import your User model
+const routes=require("./routes")
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ const startServer = async () => {
   // Apply the Apollo GraphQL middleware to your Express server
   server.applyMiddleware({ app, path: '/graphql' }); 
 
+  app.use("/",routes)
   // Blog routes setup
   app.use('/api/blog', blogRoutes); // Use the blog routes
 

@@ -48,6 +48,6 @@ userSchema.virtual('postCount').get(function () {
 });
 
 
-const UserModel = model('User', userSchema);
+const UserModel = model('UserModel', userSchema);
 
 module.exports = UserModel;
