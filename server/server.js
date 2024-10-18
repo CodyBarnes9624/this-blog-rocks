@@ -11,8 +11,7 @@ const resolvers = require('./graphQL/resolvers.js');
 const UserModel = require('./models/User'); // Import your User model
 require('dotenv').config();
 const app = express();
-const PORT = process.env.PORT || 3001;
-
+const PORT = process.env.PORT || 3001; // Use the PORT from the environment or default to 3001
 
 // Create a new Apollo Server instance
 const server = new ApolloServer({ typeDefs, resolvers });
@@ -86,7 +85,7 @@ const startServer = async () => {
       // Create JWT token
       const token = jwt.sign(
         { userId: user._id, username: user.username },
-        'secret',
+        process.env.JWT_SECRET || 'secret', // Use environment variable for JWT_SECRET
         { expiresIn: '1h' }
       );
 
@@ -120,7 +119,7 @@ const startServer = async () => {
 
   // Start the database connection and the Express server
   db.once('open', () => {
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {  // Ensure it binds to all network interfaces
       console.log(`🌍 Now listening on localhost:${PORT}${server.graphqlPath}`);
     });
   });
